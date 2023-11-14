@@ -1,0 +1,31 @@
+{
+  "name": "nosql-social-network-api",
+  "version": "1.0.0",
+  "description": "api for a social network using Express, Mongodb, and Mongoose ODM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Omar-Razo/nosql-social-network-api.git"
+  },
+  "keywords": [
+    "nosql",
+    "express",
+    "mongoose"
+  ],
+  "author": "Omar Razo",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Omar-Razo/nosql-social-network-api/issues"
+  },
+  "homepage": "https://github.com/Omar-Razo/nosql-social-network-api#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
