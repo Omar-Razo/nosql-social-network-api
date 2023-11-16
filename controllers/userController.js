@@ -1,4 +1,4 @@
-const { User, Thought } = require('../models/User')
+const { User, Thought } = require('../models')
 
 module.exports = {
     // get all users
@@ -45,12 +45,17 @@ module.exports = {
         try {
             const updatedUser = await User.findOneAndUpdate(
                 // filter
-                { _id: req.params.userId},
+                { _id: req.params.userId },
                 // updated fields
-                { },
+                req.body,
                 // returned doc is updated version
                 { new: true }
             )
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'No user with that ID!'})
+            }
+
             res.json(updatedUser)
         } catch (err) {
             console.log('Uh Oh, something went wrong');
@@ -76,11 +81,41 @@ module.exports = {
     // post new friend to user's friend list
     async addFriend(req, res) {
         try {
-            const user = await User.findById
+            const updatedUser = await User.findById(
+                { _id: req.params.userId },
+                { $push: { friends: req.params.friendId } },
+                { new: true }
+            )
+            .populate('friends');
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'No user with that ID!'})
+            }
+
+            res.json(updatedUser)
         } catch (err) {
-            
+            console.log('Uh Oh, something went wrong');
+            res.status(500).json(err);
+        }
+    },
+    // delete friend from user's friend list
+    async deleteFriend(req, res) {
+        try {
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $pull: { friends: req.params.friendId } },
+                { new: true }
+            )
+            .populate('friends');
+
+            if (!updatedUser) {
+                return res.status(404).json({ message: 'No user with that ID!'})
+            }
+
+            res.json(updatedUser)
+        } catch (err) {
+            console.log('Uh Oh, something went wrong');
+            res.status(500).json(err);
         }
     }
-
-    // delete friend from user's friend list
 }
