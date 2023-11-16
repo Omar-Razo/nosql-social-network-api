@@ -1,4 +1,4 @@
-const { User } = require('../models/User')
+const { User, Thought } = require('../models/User')
 
 module.exports = {
     // get all users
@@ -7,6 +7,7 @@ module.exports = {
             const users = await User.find()
             res.json(users)
         } catch (err) {
+            console.log('Uh Oh, something went wrong');
             res.status(500).json(err);
         }
     },
@@ -24,6 +25,7 @@ module.exports = {
 
             res.json(user)
         } catch (err) {
+            console.log('Uh Oh, something went wrong');
             res.status(500).json(err);
         }
     },
@@ -34,23 +36,51 @@ module.exports = {
 
             res.json(createdUser)
         } catch (err) {
+            console.log('Uh Oh, something went wrong');
             res.status(500).json(err)
         }
     },
     // put/update user by _id
-    async updateUser(req ,res) {
+    async updateUser(req, res) {
         try {
             const updatedUser = await User.findOneAndUpdate(
-                { _id: req.params.}
+                // filter
+                { _id: req.params.userId},
+                // updated fields
+                { },
+                // returned doc is updated version
+                { new: true }
             )
+            res.json(updatedUser)
+        } catch (err) {
+            console.log('Uh Oh, something went wrong');
+            res.status(500).json(err)
+        }
+    },
+    // delete user by _id (add associated thoughts)
+    async deleteUser(req, res) {
+        try {
+            const user = await User.findOneAndDelete({ _id: req.params.userId });
+
+            if (!user) {
+                return res.status(404).json({ message: 'No user with that ID' });
+            }
+    
+            await Thought.deleteMany({ _id: { $in: user.thoughts } });
+            res.json({ message: 'User and associated thoughts deleted!' })
+        } catch (err) {
+            console.log('Uh Oh, something went wrong');
+            res.status(500).json(err);
+        }
+    },
+    // post new friend to user's friend list
+    async addFriend(req, res) {
+        try {
+            const user = await User.findById
+        } catch (err) {
+            
         }
     }
-
-    // delete user by _id (add associated thoughts)
-
-
-    // post new friend to user's friend list
-
 
     // delete friend from user's friend list
 }
