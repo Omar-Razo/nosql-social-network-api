@@ -49,7 +49,7 @@ module.exports = {
                 // updated fields
                 req.body,
                 // returned doc is updated version
-                { new: true }
+                { runValidators: true, new: true }
             )
 
             if (!updatedUser) {
@@ -81,7 +81,7 @@ module.exports = {
     // post new friend to user's friend list
     async addFriend(req, res) {
         try {
-            const updatedUser = await User.findById(
+            const updatedUser = await User.findOneAndUpdate(
                 { _id: req.params.userId },
                 { $push: { friends: req.params.friendId } },
                 { new: true }
