@@ -29,7 +29,10 @@ module.exports = {
     // post new thought and push new thought to associated user's thoughts
     async createAndAddThought(req, res) {
         try {
-            const thought = await Thought.create(req.body)
+            const thought = await Thought.create({
+                thoughtText: req.body.thoughtText,
+                username: req.body.username
+            })
 
             const updatedUser = await User.findOneAndUpdate(
                 { username: req.body.userId },
