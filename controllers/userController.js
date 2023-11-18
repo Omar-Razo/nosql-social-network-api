@@ -26,6 +26,7 @@ module.exports = {
             res.json(user)
         } catch (err) {
             console.log('Uh Oh, something went wrong');
+            console.log(err)
             res.status(500).json(err);
         }
     },

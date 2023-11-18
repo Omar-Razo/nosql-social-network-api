@@ -35,14 +35,15 @@ module.exports = {
             })
 
             const updatedUser = await User.findOneAndUpdate(
-                { username: req.body.userId },
+                { _id: req.body.userId },
                 { $push: { thoughts: thought._id } },
                 { runValidators: true, new: true }
             )
 
-            res.json(thought, updatedUser)
+            res.json(thought)
         } catch (err) {
             console.log('Uh Oh, something went wrong');
+            console.log(err)
             res.status(500).json(err);
         }
     },
