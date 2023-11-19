@@ -14,13 +14,14 @@ module.exports = {
     // get single thought by id
     async getSingleThought(req, res) {
         try {
-            const thought = await Thought.findById(req.params.userId)
+            const thought = await Thought.findById(req.params.thoughtId)
                 .select('-__v')
 
             if (!thought) {
                 return res.status(404).json({ message: 'No thought with that ID!'})
             }
 
+            res.json(thought)
         } catch (err) {
             console.log('Uh Oh, something went wrong');
             res.status(500).json(err);
@@ -29,18 +30,25 @@ module.exports = {
     // post new thought and push new thought to associated user's thoughts
     async createAndAddThought(req, res) {
         try {
+            // check if attached user even exists
+            const user = await User.findById({ _id: req.body.userId })
+
+            if (!user) {
+                return res.status(404).json({ message: 'No user with that ID' });
+            }
+            // created thought
             const thought = await Thought.create({
                 thoughtText: req.body.thoughtText,
                 username: req.body.username
             })
-
+            // update user
             const updatedUser = await User.findOneAndUpdate(
                 { _id: req.body.userId },
                 { $push: { thoughts: thought._id } },
                 { runValidators: true, new: true }
-            )
+            ).populate('thoughts')
 
-            res.json(thought)
+            res.json(updatedUser)
         } catch (err) {
             console.log('Uh Oh, something went wrong');
             console.log(err)
@@ -91,7 +99,7 @@ module.exports = {
                 return res.status(404).json({ message: 'No thought with that ID!' });
             }
 
-            res.json(reaction, thought)
+            res.json(reaction)
         } catch (err) {
             if (err instanceof mongoose.Error.ValidationError) {
                 // validation error
@@ -116,6 +124,7 @@ module.exports = {
                 return res.status(404).json({ message: 'No thought with that ID!' });
             }
 
+            res.json({ message: "Reaction deleted!" })
         } catch (err) {
             console.log('Uh Oh, something went wrong');
             res.status(500).json(err);
